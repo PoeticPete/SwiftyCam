@@ -294,6 +294,12 @@ open class SwiftyCamViewController: UIViewController {
         super.init(coder: aDecoder)
         self.videoGravity = .resizeAspectFill
     }
+    
+    // for programmatic initialization
+    public init() {
+        super.init(nibName: nil, bundle: nil)
+        self.videoGravity = .resizeAspectFill
+    }
 
     // MARK: ViewDidLoad
 
@@ -476,10 +482,10 @@ open class SwiftyCamViewController: UIViewController {
         super.viewDidDisappear(animated)
 
         // If session is running, stop the session
-//        if self.isSessionRunning == true {
-//            self.session.stopRunning()
-//            self.isSessionRunning = false
-//        }
+        if self.isSessionRunning == true {
+            self.session.stopRunning()
+            self.isSessionRunning = false
+        }
 
         //Disble flash if it is currently enabled
         disableFlash()
@@ -802,6 +808,10 @@ extension SwiftyCamViewController {
             } catch {
                 print("[SwiftyCam]: Error locking configuration")
             }
+        } else {
+            print("[SwiftyCam]: Could not create video device input.")
+            setupResult = .configurationFailed
+            return
         }
         
         do {
@@ -1183,7 +1193,7 @@ extension SwiftyCamViewController {
 
     @objc private func panGesture(pan: UIPanGestureRecognizer) {
 
-        guard swipeToZoom == true && self.currentCamera == .rear else {
+        guard swipeToZoom == true && self.currentCamera == .rear && AVCaptureDevice.devices().first != nil else {
             //ignore pan
             return
         }
